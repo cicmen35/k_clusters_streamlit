@@ -43,6 +43,8 @@ else:
 X = feature_scale(X)
 clusters = init_centroids(X, k, int(random_state))
 
+iterations_count = st.number_input("Number of iterations (default = 100, min. value = 1)", min_value=1, value=100, key="iterations", step=1)
+
 col1, col2 = st.columns(2)
 
 # show data with initial random centroids
@@ -51,7 +53,7 @@ with col1:
     st.pyplot(plot_center_with_data(X, clusters), clear_figure=True)
 
 # run k-means until convergence
-clusters, pred = repeat_until_stabilized(X, clusters)
+clusters, pred = repeat_until_stabilized(X, clusters, iterations_count)
 
 # show final clustered data and centroids
 with col2:
