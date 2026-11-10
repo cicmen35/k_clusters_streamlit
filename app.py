@@ -14,7 +14,7 @@ from k_clust import (
 st.title("K-means Clustering")
 
 # optional tsv upload to use custom data instead of blobs
-uploader = st.file_uploader("Upload a TSV file", type=["tsv"], accept_multiple_files=False)
+uploader = st.file_uploader("Upload a TSV file (x, y columns for coordinates)", type=["tsv"], accept_multiple_files=False)
 
 # disable blob sliders if a file is uploaded
 has_upload = uploader is not None
