@@ -115,10 +115,17 @@ def pred_cluster(X: np.ndarray, clusters: dict) -> list[int]:
         pred.append(int(np.argmin(dist)))
     return pred
 
+def snapshot_centers(clusters: dict) -> dict:
+    # store only centroids coordinates
+    return {
+        i: {'center': clusters[i]['center'].copy()} for i in clusters
+    }
 
-def repeat_until_stabilized(X: np.ndarray, clusters: dict, max_iters: int = 100) -> tuple[dict, list[int]]:
+def repeat_until_stabilized(X: np.ndarray, clusters: dict, max_iters: int = 100) -> list[dict]:
     # iteratively assign and update clusters until centroids stop moving
     k = len(clusters)
+    history = [snapshot_centers(clusters)] # initial random centroids
+
     for _ in range(max_iters):
         # save old centroids so we can check if they changed
         old_centers = [clusters[i]['center'].copy() for i in range(k)]
@@ -127,15 +134,13 @@ def repeat_until_stabilized(X: np.ndarray, clusters: dict, max_iters: int = 100)
         clusters = update_clusters(clusters)
 
         new_centers = [clusters[i]['center'] for i in range(k)]
+        history.append(snapshot_centers(clusters))
 
         # stop if centroids have converged
         if np.allclose(old_centers, new_centers):
             break
 
-    # update point lists and predictions for the final centroids
-    clusters = assign_clusters(X, clusters)
-    pred = pred_cluster(X, clusters)
-    return clusters, pred
+    return history
 
 
 def plot_predicted_centers(X: np.ndarray, clusters: dict, pred: list[int]) -> plt.Figure:
