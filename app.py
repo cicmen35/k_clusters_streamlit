@@ -13,7 +13,7 @@ from k_clust import (
     plot_predicted_centers,
 )
 
-@st.cache_data
+@st.cache_data      # cache full k-means iteration history so stepping through steps doesn't recompute clusters
 def run_kmeans_history(X: np.ndarray, k: int, seed: int, max_iters: int) -> list[dict]:
     clusters = init_centroids(X, k, seed)
     return repeat_until_stabilized(X, clusters, max_iters)
@@ -51,10 +51,11 @@ X = feature_scale(X)
 #clusters = init_centroids(X, k, int(random_state))
 iterations_count = st.number_input("Number of iterations (default = 100, min. value = 1)", min_value=1, value=100, key="iterations", step=1)
 
+# run k-means and retrieve the list of cluster states across all iterations
 history = run_kmeans_history(X, k, int(random_state), int(iterations_count))
+# final iteration index
 max_step = len(history) - 1
-
-
+# keep current step in bounds if a new run converged in fewer iterations
 step = min(st.session_state.get("step", 0), max_step)
 
 # buttons to scrub through every iteration from 0 to max_step
