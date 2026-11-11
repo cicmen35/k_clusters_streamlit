@@ -101,6 +101,9 @@ def update_clusters(clusters: dict) -> dict:
         if points.shape[0] > 0:
             new_center = points.mean(axis=0)
             clusters[i]['center'] = new_center
+        else:
+            # if a centroid has no cluster in its area, respawn dead centroid at a random data point 
+            clusters[i]['center'] = X[rng.integers(0, X.shape[0])].copy()
     return clusters
 
 
