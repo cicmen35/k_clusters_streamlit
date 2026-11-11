@@ -16,7 +16,7 @@ from k_clust import (
 @st.cache_data      # cache full k-means iteration history so stepping through steps doesn't recompute clusters
 def run_kmeans_history(X: np.ndarray, k: int, seed: int, max_iters: int) -> list[dict]:
     clusters = init_centroids(X, k, seed)
-    return repeat_until_stabilized(X, clusters, max_iters)
+    return repeat_until_stabilized(X, clusters, max_iters, seed)
 
 st.title("K-means Clustering")
 

@@ -92,7 +92,7 @@ def assign_clusters(X: np.ndarray, clusters: dict) -> dict:
     return clusters
 
 
-def update_clusters(clusters: dict) -> dict:
+def update_clusters(X: np.ndarray, clusters: dict, rng: np.random.Generator) -> dict:
     # recalculate each centroid as the mean of its assigned points
     k = len(clusters)
     for i in range(k):
@@ -124,17 +124,18 @@ def snapshot_centers(clusters: dict) -> dict:
         i: {'center': clusters[i]['center'].copy()} for i in clusters
     }
 
-def repeat_until_stabilized(X: np.ndarray, clusters: dict, max_iters: int = 100) -> list[dict]:
+def repeat_until_stabilized(X: np.ndarray, clusters: dict, max_iters: int = 100, random_seed: int = 23) -> list[dict]:
     # iteratively assign and update clusters until centroids stop moving
     k = len(clusters)
     history = [snapshot_centers(clusters)] # initial random centroids
+    rng = np.random.default_rng(random_seed)
 
     for _ in range(max_iters):
         # save old centroids so we can check if they changed
         old_centers = [clusters[i]['center'].copy() for i in range(k)]
 
         clusters = assign_clusters(X, clusters)
-        clusters = update_clusters(clusters)
+        clusters = update_clusters(X, clusters, rng)
 
         new_centers = [clusters[i]['center'] for i in range(k)]
         history.append(snapshot_centers(clusters))
